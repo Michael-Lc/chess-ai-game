@@ -3,6 +3,7 @@
 
 var board = null
 var game = new Chess()
+var kingCheckRed = '#dc143c'
 var whiteSquareGrey = '#a9a9a9'
 var blackSquareGrey = '#696969'
 
@@ -32,6 +33,24 @@ function onDragStart (source, piece) {
   }
 }
 
+function redSquare(piece) {
+  index = [].concat(...game.board()).map((p, index) => {
+    if (p !== null && p.type === piece.type && piece.color === p.color) {
+      return index
+    }
+  }).filter(Number.isInteger).map((piece_index) => {
+    const row = 'abcdefgh'[piece_index % 8]
+    const column = Math.ceil((64 - piece_index) / 8)
+    return row + column
+  })
+
+  if (index.length === 0) return
+  
+  var $square = $('#board .square-' + index[0])
+  var background = kingCheckRed
+  $square.css('background', background)
+}
+
 function onDrop (source, target) {
   removeGreySquares()
 
@@ -44,6 +63,21 @@ function onDrop (source, target) {
 
   // illegal move
   if (move === null) return 'snapback'
+
+  if (game.in_check()) {
+    redSquare({type: 'k', color: game.turn()})
+  }
+
+  fetch('/get_move', {
+    method: 'POST',
+    body: JSON.stringify({fen: game.fen()})
+  })
+  .then(res => res.json())
+  .then(move => {
+    game.move(move['move'])
+    board.position(game.fen())
+  })
+  .catch(err => console.log(err))
 }
 
 function onMouseoverSquare (square, piece) {
