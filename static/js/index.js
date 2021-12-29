@@ -68,13 +68,16 @@ function onDrop (source, target) {
     redSquare({type: 'k', color: game.turn()})
   }
 
+  if (game.game_over()) return
+
   fetch('/get_move', {
     method: 'POST',
     body: JSON.stringify({fen: game.fen()})
   })
   .then(res => res.json())
-  .then(move => {
-    game.move(move['move'])
+  .then(fen => {
+    console.log(fen)
+    game = new Chess(fen['fen'])
     board.position(game.fen())
   })
   .catch(err => console.log(err))

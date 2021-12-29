@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import json
+from model.chess_ai import get_move
 
 app = Flask(__name__)
 
@@ -8,10 +9,10 @@ def hello():
     return render_template('index.html')
 
 @app.route('/get_move', methods=['POST'])
-def get_move():
+def return_move():
     data = json.loads(request.data)
-    print(data)
-    return {"move": "e6"}
+    fen = get_move(fen=data['fen'])
+    return {"fen": fen}
 
 if __name__ == '__main__':
     app.run(debug=True)
