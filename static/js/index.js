@@ -3,6 +3,8 @@
 
 var board = null
 var game = new Chess()
+var $status = $('#status')
+var $start = $("#start")
 var kingCheckRed = '#dc143c'
 var whiteSquareGrey = '#a9a9a9'
 var blackSquareGrey = '#696969'
@@ -31,6 +33,35 @@ function onDragStart (source, piece) {
       (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
     return false
   }
+}
+
+// update the board position after the piece snap
+// for castling, en passant, pawn promotion
+function onSnapEnd () {
+  board.position(game.fen())
+}
+
+function updateStatus () {
+  var status = ''
+
+  var moveColor = 'White'
+  if (game.turn() === 'b') {
+    moveColor = 'Black'
+  }
+
+  // checkmate?
+  if (game.in_checkmate()) {
+    status = 'Game over, ' + moveColor + ' is in checkmate.'
+    $status.css('color', kingCheckRed)
+  }
+
+  // draw?
+  else if (game.in_draw()) {
+    status = 'Game over, drawn position'
+    $status.css('color', "#deb887")
+  }
+
+  $status.html(status)
 }
 
 function redSquare(piece) {
@@ -64,11 +95,13 @@ function onDrop (source, target) {
   // illegal move
   if (move === null) return 'snapback'
 
+  window.sessionStorage.setItem("game_fen", game.fen())
+
   if (game.in_check()) {
     redSquare({type: 'k', color: game.turn()})
   }
 
-  if (game.game_over()) return
+  if (game.game_over()) return updateStatus()
 
   fetch('/get_move', {
     method: 'POST',
@@ -76,9 +109,9 @@ function onDrop (source, target) {
   })
   .then(res => res.json())
   .then(fen => {
-    console.log(fen)
     game = new Chess(fen['fen'])
     board.position(game.fen())
+    window.sessionStorage.setItem("game_fen", game.fen())
   })
   .catch(err => console.log(err))
 }
@@ -122,3 +155,20 @@ var config = {
 }
 
 board = Chessboard('board', config)
+
+$start.on('click', () => {
+  board.position('start')
+  game = new Chess()
+  window.sessionStorage.setItem("game_fen", game.fen())
+
+})
+
+document.addEventListener("DOMContentLoaded", ev => {
+  game_fen = window.sessionStorage.getItem("game_fen")
+  if (game_fen) {
+    game = new Chess(game_fen)
+    board.position(game_fen)
+  }
+})
+
+updateStatus()

@@ -17,5 +17,31 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column-reverse;
     background-color: darkslategrey;
+}
+
+.startBtn {
+  color: snow;
+  margin-right: 10px;
+  padding: 5px;
+  border: 1px solid white;
+  border-radius: 5px;
+  background-color: forestgreen;
+}
+
+.status-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.status-label, .status {
+  color: snow;
+  margin: 5px;
+  font-weight: bold;
+  font-style: oblique;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 20px;
 }
