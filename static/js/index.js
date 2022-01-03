@@ -5,6 +5,7 @@ var board = null
 var game = new Chess()
 var $status = $('#status')
 var $start = $("#start")
+var $undo = $("#undo")
 var kingCheckRed = '#dc143c'
 var whiteSquareGrey = '#a9a9a9'
 var blackSquareGrey = '#696969'
@@ -53,6 +54,7 @@ function updateStatus () {
   if (game.in_checkmate()) {
     status = 'Game over, ' + moveColor + ' is in checkmate.'
     $status.css('color', kingCheckRed)
+    redSquare({type: 'k', color: game.turn()})
   }
 
   // draw?
@@ -84,6 +86,9 @@ function redSquare(piece) {
 
 function onDrop (source, target) {
   removeGreySquares()
+  let move_stack = JSON.parse(window.sessionStorage.getItem("move_stack")) || []
+  move_stack = [...move_stack, game.fen()]
+  window.sessionStorage.setItem("move_stack", JSON.stringify(move_stack))
 
   // see if the move is legal
   var move = game.move({
@@ -94,6 +99,7 @@ function onDrop (source, target) {
 
   // illegal move
   if (move === null) return 'snapback'
+
 
   window.sessionStorage.setItem("game_fen", game.fen())
 
@@ -163,11 +169,25 @@ $start.on('click', () => {
 
 })
 
+$undo.on('click', () => {
+  let move_stack = JSON.parse(window.sessionStorage.getItem("move_stack"))
+
+  if (move_stack && move_stack.length !== 0) {
+    game = new Chess(move_stack[move_stack.length - 1])
+    board.position(game.fen())
+    window.sessionStorage.setItem("game_fen", game.fen())
+    move_stack.pop()
+    window.sessionStorage.setItem("move_stack", JSON.stringify(move_stack))
+  } 
+  else return
+})
+
 document.addEventListener("DOMContentLoaded", ev => {
   game_fen = window.sessionStorage.getItem("game_fen")
   if (game_fen) {
     game = new Chess(game_fen)
     board.position(game_fen)
+    updateStatus()
   }
 })
 

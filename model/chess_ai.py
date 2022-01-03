@@ -76,7 +76,7 @@ def minimax(board, depth, alpha, beta, maximizing_player):
                 break
         return max_eval
     else:
-        min_eval = -np.inf
+        min_eval = np.inf
 
         for move in board.legal_moves:
             board.push(move)
@@ -108,7 +108,7 @@ def get_ai_move(board, depth):
 def get_move(fen:str):
     board = chess.Board(fen=fen)
     if board.is_game_over(claim_draw=True):
-        return None
+        return board.fen()
     move = get_ai_move(board=board, depth=1)
     board.push(move)
     return board.fen()

@@ -14,27 +14,60 @@ body, html {
     width: 100%;
     height: 100vh;
     max-height: 100vh;
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 70% 30%;
+    justify-content: end;
     align-items: center;
-    flex-direction: column-reverse;
+    /* flex-direction: column-reverse; */
     background-color: darkslategrey;
+}
+
+.board-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .startBtn {
   color: snow;
-  margin-right: 10px;
-  padding: 5px;
+  padding: 7px;
   border: 1px solid white;
   border-radius: 5px;
   background-color: forestgreen;
 }
+.startBtn:hover {
+  background-color: rgb(18, 114, 18);
+}
+
+.undoBtn {
+  color: snow;
+  padding: 7px;
+  border: 1px solid white;
+  border-radius: 5px;
+  background-color: lightseagreen;
+}
+.undoBtn:hover {
+  background-color: rgb(14, 119, 114);
+}
 
 .status-container {
   width: 100%;
+  /* border: 1px solid; */
   display: flex;
+  margin-top: 30px;
+  padding-left: 30px;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  align-self: flex-start;
+}
+
+.btn-container {
+  width: 100%;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .status-label, .status {
