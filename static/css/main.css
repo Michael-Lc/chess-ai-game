@@ -18,7 +18,6 @@ body, html {
     grid-template-columns: 70% 30%;
     justify-content: end;
     align-items: center;
-    /* flex-direction: column-reverse; */
     background-color: darkslategrey;
 }
 
@@ -77,4 +76,21 @@ body, html {
   font-style: oblique;
   font-family: 'Courier New', Courier, monospace;
   font-size: 20px;
+}
+
+@media only screen and (max-width: 768px) {
+  .container {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .status-container {
+    padding: 0;
+  }
+
+  .status {
+    min-height: 30px;
+  }
 }

@@ -26,6 +26,7 @@ function greySquare (square) {
 }
 
 function onDragStart (source, piece) {
+  if (window.matchMedia('(max-width: 768px)').matches) onMouseoverSquare(source, piece)
   // do not pick up pieces if the game is over
   if (game.game_over()) return false
 
@@ -34,6 +35,8 @@ function onDragStart (source, piece) {
       (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
     return false
   }
+
+  if (game.turn() === 'b') return false
 }
 
 // update the board position after the piece snap
@@ -123,6 +126,9 @@ function onDrop (source, target) {
 }
 
 function onMouseoverSquare (square, piece) {
+  // if black piece dont show available moves
+  if(piece && piece.search(/^b/) === 0) return
+
   // get list of possible moves for this square
   var moves = game.moves({
     square: square,
